@@ -15,7 +15,7 @@ interface AuthContextType {
   isLoading: boolean;
   ssoToken: string | null;
   loginStatus: { success: boolean; isNewLogin: boolean } | null;
-  logoutStatus: { success: boolean; isNewLogout: boolean } | null;
+  logoutStatus: { success: boolean } | null;
   login: (token: string) => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
@@ -59,7 +59,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   } | null>(null);
   const [logoutStatus, setLogoutStatus] = React.useState<{
     success: boolean;
-    isNewLogout: boolean;
   } | null>(null);
 
   // Ensure we're on the client side before accessing localStorage/cookies
@@ -102,11 +101,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setCookie("sso_token", token);
         }
       } else {
-        logout();
+        handleLogout();
       }
     } catch (error) {
       console.error("Token verification failed:", error);
-      logout();
+      handleLogout();
     } finally {
       setIsLoading(false);
     }
@@ -122,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error("Failed to refresh user data:", error);
       // If token is invalid, logout
       if (error instanceof Error && error.message.includes("401")) {
-        logout();
+        handleLogout();
       }
     }
   };
@@ -136,10 +135,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoginStatus({ success: true, isNewLogin: true });
   };
 
-  const logout = () => {
-    // Set logoutStatus before clearing user data
-    setLogoutStatus({ success: true, isNewLogout: true });
-
+  // Create a separate internal function for logout logic
+  const handleLogout = () => {
     setUser(null);
     setSsoToken(null);
 
@@ -150,6 +147,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     setIsLoading(false);
+  };
+
+  // Public logout function
+  const logout = () => {
+    handleLogout();
+    // Set logout status after logout is complete
+    setLogoutStatus({ success: true });
   };
 
   const clearLoginStatus = () => {

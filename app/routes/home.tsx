@@ -27,19 +27,19 @@ export default function Home() {
       showToast("Successfully logged in!", "success");
       clearLoginStatus();
     }
-  }, [loginStatus, clearLoginStatus, showToast]);
 
-  // Use separate useEffect for logout to ensure it runs independently
-  React.useEffect(() => {
     // Handle logout toast
-    if (logoutStatus?.success && logoutStatus?.isNewLogout) {
-      // Delay slightly to ensure it appears after navigation completes
-      setTimeout(() => {
-        showToast("You have been successfully logged out", "success");
-        clearLogoutStatus();
-      }, 100);
+    if (logoutStatus?.success) {
+      showToast("Successfully logged out!", "success");
+      clearLogoutStatus();
     }
-  }, [logoutStatus, clearLogoutStatus, showToast]);
+  }, [
+    loginStatus,
+    logoutStatus,
+    clearLoginStatus,
+    clearLogoutStatus,
+    showToast,
+  ]);
 
   return (
     <Layout>

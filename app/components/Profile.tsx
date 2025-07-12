@@ -1,26 +1,21 @@
 import * as React from "react";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router";
+import { Navigate } from "react-router";
 
 export default function Profile() {
-  const { user, logout, ssoToken, logoutStatus } = useAuth();
-  const navigate = useNavigate();
-  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+  const { user, logout, ssoToken } = useAuth();
+  const [redirectToHome, setRedirectToHome] = React.useState(false);
 
-  // Handle navigation after logout
-  React.useEffect(() => {
-    if (isLoggingOut && logoutStatus?.success && logoutStatus?.isNewLogout) {
-      // Use setTimeout to delay navigation to next tick, preventing React Router errors
-      setTimeout(() => {
-        navigate("/");
-      }, 0);
-    }
-  }, [logoutStatus, navigate, isLoggingOut]);
-
-  const handleLogout = () => {
-    setIsLoggingOut(true);
+  const handleLogout = React.useCallback(() => {
     logout();
-  };
+    // Set the redirect flag instead of directly navigating
+    setRedirectToHome(true);
+  }, [logout]);
+
+  // If redirecting, render the Navigate component
+  if (redirectToHome) {
+    return <Navigate to="/" replace />;
+  }
 
   if (!user) {
     return (
@@ -88,12 +83,9 @@ export default function Profile() {
       <div className="mt-6">
         <button
           onClick={handleLogout}
-          disabled={isLoggingOut}
-          className={`w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-300 ${
-            isLoggingOut ? "opacity-50 cursor-not-allowed" : ""
-          }`}
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-300"
         >
-          {isLoggingOut ? "Logging out..." : "Logout"}
+          Logout
         </button>
       </div>
     </div>
