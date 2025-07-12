@@ -2,8 +2,10 @@ import * as React from "react";
 import { Link } from "react-router";
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
+import { useAuth } from "../context/AuthContext";
 
 export function Welcome() {
+  const { isAuthenticated, user } = useAuth();
   const [activeFeature, setActiveFeature] = React.useState(0);
 
   // Animation for the hero section
@@ -57,18 +59,29 @@ export function Welcome() {
                 applications.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center md:justify-start">
-                <Link
-                  to="/register"
-                  className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                >
-                  Get Started
-                </Link>
-                <Link
-                  to="/login"
-                  className="px-8 py-4 bg-slate-800/50 backdrop-blur-sm text-white font-medium rounded-xl border border-slate-700 hover:border-cyan-500/50 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                >
-                  Sign In
-                </Link>
+                {!isAuthenticated ? (
+                  <>
+                    <Link
+                      to="/register"
+                      className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                    >
+                      Get Started
+                    </Link>
+                    <Link
+                      to="/login"
+                      className="px-8 py-4 bg-slate-800/50 backdrop-blur-sm text-white font-medium rounded-xl border border-slate-700 hover:border-cyan-500/50 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                    >
+                      Sign In
+                    </Link>
+                  </>
+                ) : (
+                  <Link
+                    to="/profile"
+                    className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                  >
+                    View Profile
+                  </Link>
+                )}
               </div>
             </div>
             <div className="md:w-1/2 relative">
@@ -102,17 +115,44 @@ export function Welcome() {
                             </svg>
                           </div>
                           <h3 className="text-lg font-semibold text-gray-200">
-                            Authenticate with WebAuthn
+                            {isAuthenticated
+                              ? "Authentication Complete"
+                              : "Authenticate with WebAuthn"}
                           </h3>
                           <p className="text-sm text-gray-400 mt-2">
-                            Use your security key or biometrics
+                            {isAuthenticated
+                              ? `Welcome back, ${user?.username || "User"}!`
+                              : "Use your security key or biometrics"}
                           </p>
                         </div>
                         <div className="relative">
-                          <div className="h-10 w-10 mx-auto border-t-2 border-b-2 border-cyan-400 rounded-full animate-spin"></div>
-                          <div className="mt-4 text-center text-sm text-cyan-400">
-                            Verifying your identity...
-                          </div>
+                          {isAuthenticated ? (
+                            <div className="flex flex-col items-center">
+                              <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mb-3">
+                                <svg
+                                  className="w-6 h-6 text-green-400"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </div>
+                              <div className="text-center text-sm text-green-400">
+                                Identity Verified
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="h-10 w-10 mx-auto border-t-2 border-b-2 border-cyan-400 rounded-full animate-spin"></div>
+                              <div className="mt-4 text-center text-sm text-cyan-400">
+                                Verifying your identity...
+                              </div>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -249,18 +289,37 @@ export function Welcome() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                  <Link
-                    to="/register"
-                    className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                  >
-                    Create Account
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="px-8 py-4 bg-transparent text-white border border-slate-600 hover:border-cyan-500/50 font-medium rounded-xl hover:bg-white/5 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                  >
-                    Sign In
-                  </Link>
+                  {!isAuthenticated ? (
+                    <>
+                      <Link
+                        to="/register"
+                        className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                      >
+                        Create Account
+                      </Link>
+                      <Link
+                        to="/login"
+                        className="px-8 py-4 bg-transparent text-white border border-slate-600 hover:border-cyan-500/50 font-medium rounded-xl hover:bg-white/5 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                      >
+                        Sign In
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        to="/profile"
+                        className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                      >
+                        My Account
+                      </Link>
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="px-8 py-4 bg-transparent text-white border border-slate-600 hover:border-cyan-500/50 font-medium rounded-xl hover:bg-white/5 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                      >
+                        Refresh
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
