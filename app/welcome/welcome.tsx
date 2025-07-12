@@ -265,72 +265,55 @@ export function Welcome() {
           </div>
         </div>
 
-        {/* CTA Section */}
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-purple-600/30 rounded-3xl transform rotate-1 scale-105 blur-xl"></div>
-            <div className="relative backdrop-blur-xl bg-slate-900/80 rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-800">
-              <div className="md:flex items-center justify-between">
-                <div className="mb-6 md:mb-0 md:mr-8">
-                  <div className="inline-flex items-center mb-2">
-                    <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-md mr-2">
-                      V2
-                    </span>
-                    <span className="text-cyan-400 text-sm">
-                      Upgraded Experience
-                    </span>
+        {/* CTA Section - Only show when not authenticated */}
+        {!isAuthenticated && (
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-purple-600/30 rounded-3xl transform rotate-1 scale-105 blur-xl"></div>
+              <div className="relative backdrop-blur-xl bg-slate-900/80 rounded-3xl p-8 md:p-12 shadow-2xl border border-slate-800">
+                <div className="md:flex items-center justify-between">
+                  <div className="mb-6 md:mb-0 md:mr-8">
+                    <div className="inline-flex items-center mb-2">
+                      <span className="px-2 py-1 text-xs font-bold bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-md mr-2">
+                        V2
+                      </span>
+                      <span className="text-cyan-400 text-sm">
+                        Upgraded Experience
+                      </span>
+                    </div>
+                    <h2 className="text-3xl font-bold text-white mb-4">
+                      Ready to get started?
+                    </h2>
+                    <p className="text-gray-300 text-lg">
+                      Join thousands of organizations using our secure
+                      authentication platform.
+                    </p>
                   </div>
-                  <h2 className="text-3xl font-bold text-white mb-4">
-                    Ready to get started?
-                  </h2>
-                  <p className="text-gray-300 text-lg">
-                    Join thousands of organizations using our secure
-                    authentication platform.
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                  {!isAuthenticated ? (
-                    <>
-                      <Link
-                        to="/register"
-                        className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                      >
-                        Create Account
-                      </Link>
-                      <Link
-                        to="/login"
-                        className="px-8 py-4 bg-transparent text-white border border-slate-600 hover:border-cyan-500/50 font-medium rounded-xl hover:bg-white/5 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                      >
-                        Sign In
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        to="/profile"
-                        className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                      >
-                        My Account
-                      </Link>
-                      <button
-                        onClick={() => window.location.reload()}
-                        className="px-8 py-4 bg-transparent text-white border border-slate-600 hover:border-cyan-500/50 font-medium rounded-xl hover:bg-white/5 transform hover:-translate-y-1 transition-all duration-300 text-center"
-                      >
-                        Refresh
-                      </button>
-                    </>
-                  )}
+                  <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <Link
+                      to="/register"
+                      className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-medium rounded-xl shadow-lg hover:shadow-cyan-500/20 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                    >
+                      Create Account
+                    </Link>
+                    <Link
+                      to="/login"
+                      className="px-8 py-4 bg-transparent text-white border border-slate-600 hover:border-cyan-500/50 font-medium rounded-xl hover:bg-white/5 transform hover:-translate-y-1 transition-all duration-300 text-center"
+                    >
+                      Sign In
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
+            <div className="text-center mt-8">
+              <p className="text-sm text-gray-400">
+                No credit card required • Free trial available • Enterprise
+                support
+              </p>
+            </div>
           </div>
-          <div className="text-center mt-8">
-            <p className="text-sm text-gray-400">
-              No credit card required • Free trial available • Enterprise
-              support
-            </p>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
