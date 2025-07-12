@@ -1,6 +1,5 @@
 import * as React from "react";
 import { api } from "../utils/api";
-import { useNavigate } from "react-router";
 
 interface User {
   id: number;
@@ -138,15 +137,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = () => {
+    // Set logoutStatus before clearing user data
+    setLogoutStatus({ success: true, isNewLogout: true });
+
     setUser(null);
     setSsoToken(null);
+
     if (isClient) {
       deleteCookie("sso_token");
       // Also clear localStorage as fallback
       localStorage.removeItem("sso_token");
     }
+
     setIsLoading(false);
-    setLogoutStatus({ success: true, isNewLogout: true });
   };
 
   const clearLoginStatus = () => {
