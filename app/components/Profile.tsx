@@ -2,17 +2,24 @@ import * as React from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
-  const { user, logout, ssoToken } = useAuth();
+  const { user, ssoToken } = useAuth();
 
-  const handleLogout = React.useCallback(() => {
-    // First logout to clear the user state and cookies
-    logout();
+  const handleLogout = () => {
+    // Instead of using the context's logout function, handle everything here
 
-    // Then use direct navigation instead of React Router
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 50);
-  }, [logout]);
+    // 1. Clear cookies directly
+    document.cookie =
+      "sso_token=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;domain=.asiradnan.com;";
+
+    // 2. Clear local storage
+    localStorage.removeItem("sso_token");
+
+    // 3. Set logout success flag for toast on the home page
+    localStorage.setItem("logout_success", "true");
+
+    // 4. Hard redirect to home page with page refresh
+    window.location.replace("/");
+  };
 
   if (!user) {
     return (

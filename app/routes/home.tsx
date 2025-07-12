@@ -20,18 +20,21 @@ export default function Home() {
   const { loginStatus, clearLoginStatus } = useAuth();
   const { showToast } = useToast();
 
+  // Check for logout success flag from localStorage immediately on mount
   React.useEffect(() => {
-    // Handle login toast
+    const logoutSuccess = localStorage.getItem("logout_success");
+    if (logoutSuccess === "true") {
+      // Show toast and remove the flag
+      showToast("Successfully logged out!", "success");
+      localStorage.removeItem("logout_success");
+    }
+  }, [showToast]); // Only depend on showToast to run once on mount
+
+  // Handle login toast separately
+  React.useEffect(() => {
     if (loginStatus?.success && loginStatus?.isNewLogin) {
       showToast("Successfully logged in!", "success");
       clearLoginStatus();
-    }
-
-    // Check for logout success in localStorage
-    const logoutSuccess = localStorage.getItem("logout_success");
-    if (logoutSuccess === "true") {
-      showToast("Successfully logged out!", "success");
-      localStorage.removeItem("logout_success");
     }
   }, [loginStatus, clearLoginStatus, showToast]);
 

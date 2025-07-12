@@ -2,7 +2,6 @@ import * as React from "react";
 import Profile from "../components/Profile";
 import Layout from "../components/Layout";
 import { useAuth } from "../context/AuthContext";
-import { redirect } from "react-router";
 import type { Route } from "./+types/profile";
 
 export function meta({}: Route.MetaArgs) {
@@ -17,21 +16,43 @@ export function meta({}: Route.MetaArgs) {
 
 export default function ProfilePage() {
   const { isAuthenticated, isLoading } = useAuth();
+  const [shouldRedirect, setShouldRedirect] = React.useState(false);
 
-  // If not authenticated and not loading, redirect to login
-  if (!isAuthenticated && !isLoading) {
-    return redirect("/login");
+  // Handle authentication check
+  React.useEffect(() => {
+    // Only redirect if not loading and not authenticated
+    if (!isLoading && !isAuthenticated) {
+      // Use window.location for direct navigation instead of React Router redirect
+      window.location.href = "/login";
+    }
+  }, [isAuthenticated, isLoading]);
+
+  // If loading or will redirect, show a loading state
+  if (isLoading || (shouldRedirect && !isAuthenticated)) {
+    return (
+      <Layout>
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500"></div>
+        </div>
+      </Layout>
+    );
   }
 
-  return (
-    <Layout>
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
-          <div className="mt-10">
-            <Profile />
+  // Only render the profile if authenticated
+  if (isAuthenticated) {
+    return (
+      <Layout>
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <div className="px-4 py-6 sm:px-0">
+            <div className="mt-10">
+              <Profile />
+            </div>
           </div>
         </div>
-      </div>
-    </Layout>
-  );
+      </Layout>
+    );
+  }
+
+  // This should never render due to the useEffect redirect
+  return null;
 }
