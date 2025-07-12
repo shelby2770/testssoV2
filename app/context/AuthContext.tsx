@@ -15,12 +15,9 @@ interface AuthContextType {
   isLoading: boolean;
   ssoToken: string | null;
   loginStatus: { success: boolean; isNewLogin: boolean } | null;
-  logoutStatus: { success: boolean } | null;
-  login: (token: string) => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
   clearLoginStatus: () => void;
-  clearLogoutStatus: () => void;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -56,9 +53,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loginStatus, setLoginStatus] = React.useState<{
     success: boolean;
     isNewLogin: boolean;
-  } | null>(null);
-  const [logoutStatus, setLogoutStatus] = React.useState<{
-    success: boolean;
   } | null>(null);
 
   // Ensure we're on the client side before accessing localStorage/cookies
@@ -135,7 +129,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoginStatus({ success: true, isNewLogin: true });
   };
 
-  // Create a separate internal function for logout logic
+  // Internal logout function
   const handleLogout = () => {
     setUser(null);
     setSsoToken(null);
@@ -152,16 +146,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Public logout function
   const logout = () => {
     handleLogout();
-    // Set logout status after logout is complete
-    setLogoutStatus({ success: true });
+
+    // Store logout success in localStorage instead of React state
+    if (isClient) {
+      localStorage.setItem("logout_success", "true");
+    }
   };
 
   const clearLoginStatus = () => {
     setLoginStatus(null);
-  };
-
-  const clearLogoutStatus = () => {
-    setLogoutStatus(null);
   };
 
   const value = {
@@ -170,12 +163,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     ssoToken,
     loginStatus,
-    logoutStatus,
     login,
     logout,
     refreshUser,
     clearLoginStatus,
-    clearLogoutStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

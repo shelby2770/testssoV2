@@ -1,21 +1,18 @@
 import * as React from "react";
 import { useAuth } from "../context/AuthContext";
-import { Navigate } from "react-router";
 
 export default function Profile() {
   const { user, logout, ssoToken } = useAuth();
-  const [redirectToHome, setRedirectToHome] = React.useState(false);
 
   const handleLogout = React.useCallback(() => {
+    // First logout to clear the user state and cookies
     logout();
-    // Set the redirect flag instead of directly navigating
-    setRedirectToHome(true);
-  }, [logout]);
 
-  // If redirecting, render the Navigate component
-  if (redirectToHome) {
-    return <Navigate to="/" replace />;
-  }
+    // Then use direct navigation instead of React Router
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 50);
+  }, [logout]);
 
   if (!user) {
     return (

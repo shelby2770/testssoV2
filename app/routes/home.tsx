@@ -17,8 +17,7 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { loginStatus, clearLoginStatus, logoutStatus, clearLogoutStatus } =
-    useAuth();
+  const { loginStatus, clearLoginStatus } = useAuth();
   const { showToast } = useToast();
 
   React.useEffect(() => {
@@ -28,18 +27,13 @@ export default function Home() {
       clearLoginStatus();
     }
 
-    // Handle logout toast
-    if (logoutStatus?.success) {
+    // Check for logout success in localStorage
+    const logoutSuccess = localStorage.getItem("logout_success");
+    if (logoutSuccess === "true") {
       showToast("Successfully logged out!", "success");
-      clearLogoutStatus();
+      localStorage.removeItem("logout_success");
     }
-  }, [
-    loginStatus,
-    logoutStatus,
-    clearLoginStatus,
-    clearLogoutStatus,
-    showToast,
-  ]);
+  }, [loginStatus, clearLoginStatus, showToast]);
 
   return (
     <Layout>
