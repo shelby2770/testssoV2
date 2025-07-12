@@ -14,9 +14,11 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   ssoToken: string | null;
+  loginStatus: { success: boolean; isNewLogin: boolean } | null;
   login: (token: string) => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
+  clearLoginStatus: () => void;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -49,6 +51,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [ssoToken, setSsoToken] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [isClient, setIsClient] = React.useState(false);
+  const [loginStatus, setLoginStatus] = React.useState<{
+    success: boolean;
+    isNewLogin: boolean;
+  } | null>(null);
 
   // Ensure we're on the client side before accessing localStorage/cookies
   React.useEffect(() => {
@@ -121,6 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setCookie("sso_token", token);
     }
     verifyToken(token);
+    setLoginStatus({ success: true, isNewLogin: true });
   };
 
   const logout = () => {
@@ -134,14 +141,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   };
 
+  const clearLoginStatus = () => {
+    setLoginStatus(null);
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
     isLoading,
     ssoToken,
+    loginStatus,
     login,
     logout,
     refreshUser,
+    clearLoginStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

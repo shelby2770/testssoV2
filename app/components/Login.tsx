@@ -1,9 +1,10 @@
 import * as React from "react";
 import { startAuthentication } from "../utils/webauthn";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export default function Login() {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [username, setUsername] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
@@ -53,6 +54,8 @@ export default function Login() {
       if (response.authenticated || response.verified || response.success) {
         console.log("✅ Authentication successful, logging in user");
         login(response.sso_token);
+        // Redirect to homepage after successful login
+        navigate("/");
       } else {
         throw new Error("Authentication failed - no success indicator");
       }

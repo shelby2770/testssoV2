@@ -1,10 +1,11 @@
 import * as React from "react";
 import { startRegistration } from "../utils/webauthn";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { api } from "../utils/api";
 
 export default function Registration() {
+  const navigate = useNavigate();
   const { login } = useAuth();
   const [username, setUsername] = React.useState("");
   const [firstName, setFirstName] = React.useState("");
@@ -119,6 +120,8 @@ export default function Registration() {
         // If we get an SSO token, log the user in
         if (response.sso_token || response.token) {
           login(response.sso_token || response.token);
+          // Redirect to homepage after successful registration
+          navigate("/");
         }
       } else {
         throw new Error("Registration verification failed");
