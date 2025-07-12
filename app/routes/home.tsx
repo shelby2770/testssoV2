@@ -17,7 +17,8 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { loginStatus, clearLoginStatus } = useAuth();
+  const { loginStatus, clearLoginStatus, logoutStatus, clearLogoutStatus } =
+    useAuth();
   const { showToast } = useToast();
 
   React.useEffect(() => {
@@ -25,7 +26,18 @@ export default function Home() {
       showToast("Successfully logged in!", "success");
       clearLoginStatus();
     }
-  }, [loginStatus, showToast, clearLoginStatus]);
+
+    if (logoutStatus?.success && logoutStatus?.isNewLogout) {
+      showToast("Successfully logged out!", "info");
+      clearLogoutStatus();
+    }
+  }, [
+    loginStatus,
+    clearLoginStatus,
+    logoutStatus,
+    clearLogoutStatus,
+    showToast,
+  ]);
 
   return (
     <Layout>

@@ -1,5 +1,6 @@
 import * as React from "react";
 import { api } from "../utils/api";
+import { useNavigate } from "react-router";
 
 interface User {
   id: number;
@@ -15,10 +16,12 @@ interface AuthContextType {
   isLoading: boolean;
   ssoToken: string | null;
   loginStatus: { success: boolean; isNewLogin: boolean } | null;
+  logoutStatus: { success: boolean; isNewLogout: boolean } | null;
   login: (token: string) => void;
   logout: () => void;
   refreshUser: () => Promise<void>;
   clearLoginStatus: () => void;
+  clearLogoutStatus: () => void;
 }
 
 const AuthContext = React.createContext<AuthContextType | undefined>(undefined);
@@ -54,6 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loginStatus, setLoginStatus] = React.useState<{
     success: boolean;
     isNewLogin: boolean;
+  } | null>(null);
+  const [logoutStatus, setLogoutStatus] = React.useState<{
+    success: boolean;
+    isNewLogout: boolean;
   } | null>(null);
 
   // Ensure we're on the client side before accessing localStorage/cookies
@@ -139,10 +146,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem("sso_token");
     }
     setIsLoading(false);
+    setLogoutStatus({ success: true, isNewLogout: true });
   };
 
   const clearLoginStatus = () => {
     setLoginStatus(null);
+  };
+
+  const clearLogoutStatus = () => {
+    setLogoutStatus(null);
   };
 
   const value = {
@@ -151,10 +163,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     ssoToken,
     loginStatus,
+    logoutStatus,
     login,
     logout,
     refreshUser,
     clearLoginStatus,
+    clearLogoutStatus,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
